@@ -41,9 +41,9 @@ class ApiUpgradeCommand {
         }
         var isWin             = /^win/.test(os.platform());
 
-        var command = 'sh ./cli/upgraders/linux.sh';
+        var command = 'sh ' + path.join(__dirname, 'cli/upgraders/linux.sh');
         if (isWin) {
-            command = path.resolve('./cli/upgraders/windows.bat');
+            command = path.join(__dirname, 'cli/upgraders/windows.bat');
         }
 
         command += util.format(' %s %s %s', machine, container, directory);
