@@ -89,14 +89,16 @@ class ApiConfigurationCommand {
 
             var command = 'sh ./cli/installers/linux.sh';
             if (isWin) {
-                command = './cli/installers/windows.bat';
+                command = path.resolve('./cli/installers/windows.bat');
             }
 
             if (force) {
                 command += ' --force';
+            } else {
+                command += ' 0'
             }
 
-            command += ' ' + targetPath;
+            command += ' ' + path.resolve(targetPath);
             command += ' ' + self.program.port;
             var res = exec(command, // command line argument directly in string
                 function (error, stdout, stderr) {      // one easy function to capture data/errors
