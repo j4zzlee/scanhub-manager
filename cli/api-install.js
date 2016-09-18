@@ -60,6 +60,7 @@ class ApiInstallCommand {
                     console.log(chalk.red('User has cancelled.'));
                 }
 
+                prompt.stop();
                 process.exit(1);
             }
 
@@ -120,7 +121,8 @@ class ApiInstallCommand {
             });
             res.stderr.on('data', function (data) {
                 console.log(chalk.red(data));
-            })
+            });
+            prompt.stop();
         });
     }
 }
