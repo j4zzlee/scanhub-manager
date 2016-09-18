@@ -35,9 +35,5 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
-.idea/misc.xml
-.idea/modules.xml
-.idea/scanhub-manager.iml
-.idea/vcs.xml
-.idea/workspace.xml
+.idea
 scanhub
