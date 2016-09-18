@@ -16,6 +16,10 @@
   
    > scanhub-manager-cli api:install [--force] [--port 3000]
 
+ - To upgrade Scanhub API:
+   
+   > scanhub-manager-cli api:upgrade [--docker-machine scanhub] [--working-directory /src/app] --docker-container <container_name>
+
 2. Other projects
  - We have scanhub-cli command for uploading/querying/searching hosts from: https://github.com/st2forget/scanhub-cli
 
