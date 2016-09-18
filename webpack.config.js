@@ -93,6 +93,10 @@ module.exports = function (options) {
         module   : {
             loaders: loaders
         },
-        devtool  : options.devtool || 'sourcemap'
+        devtool  : options.devtool || 'sourcemap',
+        node: {
+            __dirname: false,
+            __filename: false
+        }
     }
 };

@@ -67,9 +67,9 @@ class ApiInstallCommand {
                 mysqlPassword     = result.mysql_password,
                 isWin             = /^win/.test(os.platform()),
                 force             = !!self.program.force,
-                targetPath        = './scanhub',
-                envFile           = './cli/installers/env.dist',
-                dockerFile        = './cli/installers/docker-compose.prod.yml';
+                targetPath        = path.join(__dirname, './scanhub'),
+                envFile           = path.join(__dirname, 'cli/installers/env.dist'),
+                dockerFile        = path.join(__dirname, './cli/installers/docker-compose.prod.yml');
 
             if (!fs.existsSync(targetPath)) {
                 fs.mkdirSync(targetPath);
@@ -86,7 +86,7 @@ class ApiInstallCommand {
             fs.writeFileSync(targetPath + '/docker-compose.yml', dockerFileContent);
 
 
-            var command = 'sh ./cli/installers/linux.sh';
+            var command = 'sh ' + path.join(__dirname, 'cli/installers/linux.sh');
             if (isWin) {
                 command = path.resolve('./cli/installers/windows.bat');
             }

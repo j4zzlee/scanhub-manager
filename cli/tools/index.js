@@ -51,4 +51,3 @@ class CommandTool {
 }
 
 module.exports = CommandTool;
-
