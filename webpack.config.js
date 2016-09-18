@@ -54,7 +54,8 @@ module.exports = function (options) {
 
     var plugins = [
         new CopyWebpackPlugin([
-            {from: 'cli/installers/*.*'}
+            {from: 'cli/installers/*.*'},
+            {from: 'cli/upgraders/*.*'}
         ]),
         new webpack.optimize.CommonsChunkPlugin({
             name     : "main",

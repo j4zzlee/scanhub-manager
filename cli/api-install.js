@@ -7,7 +7,7 @@ import path from 'path';
 import os from 'os';
 Promise.promisifyAll(prompt);
 
-class ApiConfigurationCommand {
+class ApiInstallCommand {
     static command = {
         name       : 'api:install',
         description: 'Install Scanhub\'s API from DockerHub',
@@ -28,7 +28,6 @@ class ApiConfigurationCommand {
     constructor (program) {
         this.program = program;
     }
-
 
     async action () {
         var self         = this,
@@ -127,4 +126,4 @@ class ApiConfigurationCommand {
 }
 
 
-module.exports = ApiConfigurationCommand;
+module.exports = ApiInstallCommand;
