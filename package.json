@@ -7,7 +7,7 @@
     "url": "https://github.com/st2forget/scanhub-manager.git"
   },
   "bin": {
-    "scanhub-manager": "./bin/main.js"
+    "scanhub-manager-cli": "./bin/main.js"
   },
   "scripts": {
     "watch": "webpack --config webpack-dev-watch.config.js --progress --profile --colors --watch",
