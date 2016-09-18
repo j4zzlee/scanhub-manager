@@ -4,9 +4,17 @@
  - Install Docker: https://docs.docker.com/engine/installation/
  - Install VirtualBox: https://www.virtualbox.org/wiki/Downloads
  - Install Nodejs: https://nodejs.org/en/download/current/
- - Install scanhub-manager-cli: npm install -g scanhub-manager
- - To know more information about scanhub-manager-cli, type: scanhub-manager-cli --help
- - To install Scanhub API: scanhub-manager-cli api:install [--force] [--port 3000]
+ - Install scanhub-manager-cli: 
+  
+   > npm install -g scanhub-manager
+
+ - To know more information about scanhub-manager-cli, type: 
+  
+   > scanhub-manager-cli --help
+
+ - To install Scanhub API: 
+  
+   > scanhub-manager-cli api:install [--force] [--port 3000]
 
 2. Other projects
  - We have scanhub-cli command for uploading/querying/searching hosts from: https://github.com/st2forget/scanhub-cli
