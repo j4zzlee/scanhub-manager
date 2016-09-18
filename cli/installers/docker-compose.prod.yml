@@ -4,10 +4,10 @@ api:
   volumes:
       - /src/app
   ports:
-    - "3000:3000"
+    - "{NODE_PORT}:{NODE_PORT}"
     - "80:80"
   expose:
-    - 3000
+    - {NODE_PORT}
     - 80
   links:
     - "redis:redis"

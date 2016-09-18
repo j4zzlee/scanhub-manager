@@ -77,11 +77,15 @@ class ApiConfigurationCommand {
             }
 
             var envFileContent = fs.readFileSync(envFile, 'utf8');
-            envFileContent     = envFileContent.replace('{MYSQL_ROOT_PASSWORD}', mysqlRootPassword);
-            envFileContent     = envFileContent.replace('{MYSQL_PASSWORD}', mysqlPassword);
-            envFileContent     = envFileContent.replace('{NODE_PORT}', self.program.port);
+            envFileContent     = envFileContent.replace(/\{MYSQL_ROOT_PASSWORD}/g, mysqlRootPassword);
+            envFileContent     = envFileContent.replace(/\{MYSQL_PASSWORD}/g, mysqlPassword);
+            envFileContent     = envFileContent.replace(/\{NODE_PORT}/g, self.program.port);
             fs.writeFileSync(targetPath + '/.env', envFileContent);
-            fs.writeFileSync(targetPath + '/docker-compose.yml', fs.readFileSync(dockerFile));
+
+            var dockerFileContent = fs.readFileSync(dockerFile, 'utf8');
+            dockerFileContent     = dockerFileContent.replace(/\{NODE_PORT}/g, self.program.port);
+            fs.writeFileSync(targetPath + '/docker-compose.yml', dockerFileContent);
+
 
             var command = 'sh ./cli/installers/linux.sh';
             if (isWin) {
@@ -104,6 +108,8 @@ class ApiConfigurationCommand {
                         console.log('- Please follow the documents to know how to manage docker containers: ' + chalk.blue('https://docs.docker.com/'));
                         console.log('- To initialize API server, please enter "api" container and run:' + chalk.green('scanhub api:init'));
                         console.log('- For more information, please take a look to our document at ' + chalk.blue('http://scanhub.io/documents/scanhub_api_1.0_manual.pdf'));
+                    } else {
+                        console.log(chalk.red(error));
                     }
                     process.exit(0);
                 });
