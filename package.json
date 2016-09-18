@@ -1,6 +1,6 @@
 {
   "name": "scanhub-manager",
-  "version": "1.0.0-20160918",
+  "version": "1.0.0-20160918-2",
   "description": "scanhub-manager",
   "repository": {
     "type": "git",
@@ -48,6 +48,7 @@
     "node-status": "^0.1.7",
     "progress-stream": "^1.2.0",
     "prompt": "^1.0.0",
+    "regenerator-runtime": "^0.9.5",
     "request": "^2.74.0",
     "urlencode": "^1.1.0",
     "validator": "^5.5.0",
