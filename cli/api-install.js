@@ -3,8 +3,8 @@ import prompt from 'prompt';
 import Promise from 'bluebird';
 import {exec} from 'child_process';
 import fs from 'fs';
+import path from 'path';
 import os from 'os';
-import PortManager from '../libs/net';
 Promise.promisifyAll(prompt);
 
 class ApiConfigurationCommand {
@@ -31,9 +31,8 @@ class ApiConfigurationCommand {
 
 
     async action () {
-        var self        = this,
-            portManager = new PortManager(this.program.port),
-            properties  = [
+        var self         = this,
+            properties   = [
                 {
                     name       : 'mysql_root_password',
                     description: chalk.green('Enter Mysql Root Password, defaults to "P@ssword123":'),
@@ -49,64 +48,72 @@ class ApiConfigurationCommand {
                     default    : 'P@ssword123'
                 }
             ];
-        portManager.isInUse((res) => {
-            if (res) {
-                console.log(chalk.red('The requested port number: ' + this.program.port + ', is not available.'));
+        prompt.message   = '';
+        prompt.delimiter = '';
+
+        prompt.start();
+
+        prompt.get(properties, function (err, result) {
+            if (err) {
+                if (err.message !== 'canceled') {
+                    console.log(err);
+                } else {
+                    console.log(chalk.red('User has cancelled.'));
+                }
+
                 process.exit(1);
-                return;
             }
 
-            prompt.message   = '';
-            prompt.delimiter = '';
+            var mysqlRootPassword = result.mysql_root_password,
+                mysqlPassword     = result.mysql_password,
+                isWin             = /^win/.test(os.platform()),
+                force             = !!self.program.force,
+                targetPath        = './scanhub',
+                envFile           = './cli/installers/env.dist',
+                dockerFile        = './cli/installers/docker-compose.prod.yml';
 
-            prompt.start();
+            if (!fs.existsSync(targetPath)) {
+                fs.mkdirSync(targetPath);
+            }
 
-            prompt.get(properties, function (err, result) {
-                var mysqlRootPassword = result.mysql_root_password,
-                    mysqlPassword     = result.mysql_password,
-                    isWin             = /^win/.test(os.platform()),
-                    force             = !!self.program.force,
-                    targetPath        = './scanhub',
-                    envFile           = './cli/installers/env.dist',
-                    dockerFile        = './cli/installers/docker-compose.prod.yml';
+            var envFileContent = fs.readFileSync(envFile, 'utf8');
+            envFileContent     = envFileContent.replace('{MYSQL_ROOT_PASSWORD}', mysqlRootPassword);
+            envFileContent     = envFileContent.replace('{MYSQL_PASSWORD}', mysqlPassword);
+            envFileContent     = envFileContent.replace('{NODE_PORT}', self.program.port);
+            fs.writeFileSync(targetPath + '/.env', envFileContent);
+            fs.writeFileSync(targetPath + '/docker-compose.yml', fs.readFileSync(dockerFile));
 
-                if (!fs.existsSync(targetPath)) {
-                    fs.mkdirSync(targetPath);
-                }
+            var command = 'sh ./cli/installers/linux.sh';
+            if (isWin) {
+                command = './cli/installers/windows.bat';
+            }
 
-                var envFileContent = fs.readFileSync(envFile, 'utf8');
-                envFileContent     = envFileContent.replace('{MYSQL_ROOT_PASSWORD}', mysqlRootPassword);
-                envFileContent     = envFileContent.replace('{MYSQL_PASSWORD}', mysqlPassword);
-                envFileContent     = envFileContent.replace('{NODE_PORT}', self.program.port);
-                fs.writeFileSync(targetPath + '/.env', envFileContent);
-                fs.writeFileSync(targetPath + '/docker-compose.yml', fs.readFileSync(dockerFile));
+            if (force) {
+                command += ' --force';
+            }
 
-                var command = 'sh ./cli/installers/linux.sh';
-                if (isWin) {
-                    command = './cli/installers/windows.bat';
-                }
-
-                if (force) {
-                    command += ' --force';
-                }
-
-                command += ' ' + targetPath;
-                command += ' ' + self.program.port;
-                var res = exec(command, // command line argument directly in string
-                    function (error, stdout, stderr) {      // one easy function to capture data/errors
-                        if (error || stderr) {
-                            console.log(chalk.red(stdout));
-                        } else {
-                            console.log(stdout);
-                        }
-
-                        process.exit(0);
-                    });
-
-                res.stdout.on('data', function(data) {
-                    console.log(data);
+            command += ' ' + targetPath;
+            command += ' ' + self.program.port;
+            var res = exec(command, // command line argument directly in string
+                function (error, stdout, stderr) {      // one easy function to capture data/errors
+                    if (!error) {
+                        console.log(chalk.green('- You have successfully installed new Scanhub API servers.'));
+                        console.log(chalk.red('\t*** It is up to you to share the API across your networks.'));
+                        console.log('- The set up folder is located at ' + chalk.green(path.resolve(targetPath)));
+                        console.log('- The API server is located at ' + chalk.blue('http://localhost:' + self.program.port + '/api/1.0'));
+                        console.log('- Please follow the documents to know how to manage docker containers: ' + chalk.blue('https://docs.docker.com/'));
+                        console.log('- To initialize API server, please enter "api" container and run:' + chalk.green('scanhub api:init'));
+                        console.log('- For more information, please take a look to our document at ' + chalk.blue('http://scanhub.io/documents/scanhub_api_1.0_manual.pdf'));
+                    }
+                    process.exit(0);
                 });
+
+            res.stdout.on('data', function (data) {
+                console.log(data);
             });
+            res.stderr.on('data', function (data) {
+                console.log(chalk.red(data));
+            })
         });
     }
 }
