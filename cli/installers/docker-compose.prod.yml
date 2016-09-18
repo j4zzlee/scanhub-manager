@@ -1,0 +1,48 @@
+api:
+  image: scanhub/api
+  env_file: ./.env
+  volumes:
+      - /src/app
+  ports:
+    - "3000:3000"
+    - "80:80"
+  expose:
+    - 3000
+    - 80
+  links:
+    - "redis:redis"
+    - "mysql:mysql"
+    - "es:es"
+    - "rabbitmq:rabbitmq"
+
+redis:
+  image: redis
+  ports:
+    - "6379:6379"
+  expose:
+    - 6379
+
+mysql:
+  image: scanhub/mysql
+  env_file: ./.env
+  expose:
+    - 3306
+  ports:
+    - "3306:3306"
+
+es:
+  image: scanhub/es
+  command: elasticsearch -Des.network.host=0.0.0.0
+  expose:
+    - 9200
+    - 9300
+  ports:
+    - "9200:9200"
+    - "9300:9300"
+
+rabbitmq:
+    image: rabbitmq:3-management
+    expose:
+     - 5672
+    ports:
+     - "5672:5672"
